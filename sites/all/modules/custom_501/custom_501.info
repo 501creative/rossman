@@ -1,0 +1,4 @@
+name = 501creative Customizations
+description = Module that adds more permissions
+package = 501
+core = 7.x

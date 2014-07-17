@@ -1,0 +1,27 @@
+name = Custom 501 Ckfiles
+description = "Configuration for CkEditor and CkFinder with WYSIWYG Module"
+
+; Core version (required)
+core = 7.x
+
+; Package name (see http://drupal.org/node/542202 for a list of names)
+; package = 
+
+; PHP version requirement (optional)
+; php = 5.2
+
+; Loadable code files
+; files[] = custom_ckfiles.module
+; files[] = custom_ckfiles.admin.inc
+; files[] = custom_ckfiles.class.inc
+
+; Module dependencies
+dependencies[] = wysiwyg
+dependencies[] = libraries
+
+; Configuration page
+; configure = admin/config/custom_ckfiles
+
+
+; For further information about configuration options, see
+; - http://drupal.org/node/542202

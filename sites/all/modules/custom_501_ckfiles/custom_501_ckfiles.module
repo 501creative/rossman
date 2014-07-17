@@ -1,0 +1,121 @@
+<?php
+/**
+ * @file
+ * This is the file description for Custom Ckfiles module.
+ *
+ * In this more verbose, multi-line description, you can specify what this
+ * file does exactly. Make sure to wrap your documentation in column 78 so
+ * that the file can be displayed nicely in default-sized consoles.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function custom_501_ckfiles_wysiwyg_editor_settings_alter(&$settings, $context) {
+  // Each editor has its own collection of native settings that may be extended
+  // or overridden. Please consult the respective official vendor documentation
+  // for details.
+  if ($context['profile']->editor == 'ckeditor') {
+    // Supported values to JSON data types.
+	  $settings['toolbar'] = array(
+		      array('Bold','Italic','Underline','Strike'),
+		      array('NumberedList','BulletedList','Blockquote'),
+		      array('JustifyLeft','JustifyCenter','JustifyRight'),
+		      array('Anchor','Link','Unlink'),
+		      array('Image','Table','MediaEmbed','Flash', 'Templates'),
+		      array('HorizontalRule'),
+		      array('Undo','Redo'),
+		      '/',
+		      array('Styles'),
+		      array('PasteText','PasteFromWord','RemoveFormat'),
+		      array('Outdent','Indent'),
+			  array('SpellChecker')
+		    );
+    $settings['customConfig'] = base_path() . drupal_get_path('module', 'custom_501_ckfiles') .
+		                                '/ckeditor_custom_config.js';
+  }
+}
+
+function custom_501_ckfiles_wysiwyg_plugin($editor, $version) {
+    // drupal_set_message('Module invoked. Editor is: ' . $editor);
+    if ($editor === 'ckeditor') {
+        $ckfinder_path = libraries_get_path('ckfinder');
+        $settings = array(
+            'filebrowserBrowseUrl'      => '/' . $ckfinder_path
+                                         .  '/ckfinder.html',
+            'filebrowserImageBrowseUrl' => '/' . $ckfinder_path
+                                         .  '/ckfinder.html?Type=Images',
+            'filebrowserUploadUrl'      => '/' . $ckfinder_path
+                                         . '/ckfinder/core/connector/php/connector.php?'
+                                         . 'command=QuickUpload&type=Files',
+            'filebrowserImageUploadUrl' => '/' . $ckfinder_path
+                                         . '/ckfinder/core/connector/php/connector.php?'
+                                         . 'command=QuickUpload&type=Images'
+        );
+    
+        return array(
+          'ckfinder'     => array(
+            'extensions' => array('ckfinder' => t('CKFinder')),
+            'path'       => $ckfinder_path ,
+            'filename'   => 'ckfinder.js',
+            'url'        => 'http://ckfinder.com/',
+            'load'       => FALSE,
+            'internal'   => FALSE,
+            'options'    => $settings
+          ),
+					'mediaembed'   => array(
+						'buttons'    => array(
+              'MediaEmbed' => t('Embed Media'),
+							),
+            'load'       => TRUE,
+            'internal'   => TRUE,
+          ),
+       	);
+
+    }
+
+ 
+}
+
+function custom_501_ckfiles_permission()
+{
+	return array(
+		'manage ckfinder files' => array(
+			'title' => t('Manage CKFinder Files'),
+			'description' => t('Allow user to load CKFinder outside of the editor'),
+			'restrict access' => true,
+		),
+	);
+}
+
+function custom_501_ckfiles_menu()
+{
+	$items['admin/resources'] = array(
+		'title' => 'Resources',
+		'description' => 'Manage media and resources.',
+		'page callback' => 'system_admin_menu_block_page',
+		'access arguments' => array('access administration pages'),
+		'file' => 'system.admin.inc',
+		'file path' => drupal_get_path('module', 'system'),
+	);
+	$items['admin/resources/ckfinder'] = array(
+		'title' => t('Manage CKFinder Files'),
+		'page callback' => 'custom_501_ckfiles_ckfinder',
+		'access arguments' => array('manage ckfinder files'),
+		'description' => t('Manage files uploaded through CKFinder.'),
+		'type' => MENU_NORMAL_ITEM,
+	);
+	
+	return $items;
+}
+
+function custom_501_ckfiles_resources_page() {
+	return system_admin_menu_block_page();
+}
+
+function custom_501_ckfiles_ckfinder()
+{
+	drupal_add_js('/sites/all/libraries/ckfinder/ckfinder.js');
+	drupal_add_js('/sites/all/modules/custom_501_ckfiles/ckfinder.js');
+	return '<p>Launching CKFinder...</p>';
+}

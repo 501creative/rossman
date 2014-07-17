@@ -1,0 +1,27 @@
+<?php
+
+function custom_501_permission()
+{
+	return array(
+		'manage site description' => array(
+			'title' => t('Manage Site Description'),
+			'description' => t('Allow user to modify the site\'s default page description.'),
+			'restrict access' => true,
+		),
+	);
+}
+
+function custom_501_menu()
+{
+	$items['admin/config/services/site-description'] = array(
+		'title' => t('Update Site Description'),
+		'page callback' => 'drupal_get_form',
+		'page arguments' => array('custom_501_site_description_form'),
+		'access arguments' => array('manage site description'),
+		'description' => t('Manage default page description.  Used in hidden tag to improve Search Engine Optimization.  If a page does not have a description assigned, this is what is used.'),
+		'type' => MENU_NORMAL_ITEM,
+		'file' => 'custom_501.details.inc',
+	);
+	
+	return $items;
+}
